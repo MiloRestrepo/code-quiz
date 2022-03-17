@@ -89,11 +89,26 @@ currentQuiz.choices.forEach(function(choice, i ){
 }
 //user chooses answer if right or wrong. If wrong deduct time, are there questions left do you go back to make questions or go back to game end function.
 function choice(){
-
+if(this.value !== quizQuestion[indexQuestion].answer) {
+    time -= 10;
+    if(time < 0) {
+        time = 0 ;
+    }
+    timeEL.textContent = time;
+}
+indexQuestion++ ;
+if(indexQuestion === quizQuestion.length) {
+    gameEnd() ;
+} else {
+    makeQuestions() ;
+}
 }
 //stop timer, clear questions, unhide final div, code for local storage, create submit button
 function gameEnd(){
-
+    clearInterval(timerClock) ;
+    finalEL.removeAttribute("class") ;
+    scoreEL.textContent = time ;
+    questionsEL.setAttribute("class", "hide") ;
 
 }
 
@@ -107,6 +122,20 @@ function clock(){
     }
 }
 //create save score
+function saveScore() {
+    var initials = initialsEL.value.trim() ;
+    if(initials !== "") {
+        var scores = JSON.parse(localStorage.getItem("scores")) || [] ;
+        var newScore = {
+            score: time, 
+            initials: initials 
+            
+        } ;
+        scores.push(newScore) ;
+        localStorage.setItem("scores", JSON.stringify(scores)) ;
+    } 
+
+}
 //create button to start quiz
 startBtn.onclick = quizStart;
 //create button to submit initials
